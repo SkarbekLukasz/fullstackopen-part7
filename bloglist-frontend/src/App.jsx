@@ -4,14 +4,20 @@ import blogService from "./services/blogs";
 import Login from "./components/Login";
 import loginService from "./services/login";
 import Notification from "./components/Notification";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setNotification,
   removeNotification,
 } from "./redux/reducers/notificationReducer";
+import {
+  addVote,
+  deleteBlogs,
+  getBlogs,
+  saveBlog,
+} from "./redux/reducers/blogsReducer";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
+  const blogs = useSelector((store) => store.blog);
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -20,7 +26,7 @@ const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(sortBlogsByLikes(blogs)));
+    dispatch(getBlogs());
   }, []);
 
   useEffect(() => {
@@ -47,11 +53,10 @@ const App = () => {
     const { title, author, url } = newBlog;
     try {
       const blog = { title, author, url };
-      const response = await blogService.saveNewBlog(blog);
-      setBlogs(sortBlogsByLikes(blogs.concat(response)));
+      dispatch(saveBlog(blog));
       dispatch(
         setNotification(
-          `Successfully added blog ${response.title} by ${response.author}`
+          `Successfully added blog ${blog.title} by ${blog.author}`
         )
       );
       newBlogFormRef.current.toggleVisibility();
@@ -68,14 +73,7 @@ const App = () => {
 
   const updateLikesCount = async (updatedBlog) => {
     try {
-      const response = await blogService.updateLikesCount(updatedBlog);
-      const updatedBlogs = blogs.map((blog) =>
-        blog.id === response.data.id
-          ? { ...blog, likes: response.data.likes }
-          : blog
-      );
-      const sortedBlogs = sortBlogsByLikes(updatedBlogs);
-      setBlogs(sortedBlogs);
+      dispatch(addVote(updatedBlog));
       dispatch(
         setNotification(
           `You liked blog ${updatedBlog.title} by ${updatedBlog.author}`
@@ -94,9 +92,7 @@ const App = () => {
 
   const deleteBlog = async (blogToDelete) => {
     try {
-      await blogService.deleteBlog(blogToDelete.id);
-      const updatedBlogs = blogs.filter((blog) => blog.id !== blogToDelete.id);
-      setBlogs(sortBlogsByLikes(updatedBlogs));
+      dispatch(deleteBlogs(blogToDelete));
       dispatch(
         setNotification(
           `Successfully deleted blog ${blogToDelete.title} by ${blogToDelete.author}`
