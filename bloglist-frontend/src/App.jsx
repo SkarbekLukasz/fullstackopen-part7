@@ -15,10 +15,11 @@ import {
   getBlogs,
   saveBlog,
 } from "./redux/reducers/blogsReducer";
+import { loginUser, setUser } from "./redux/reducers/userReducer";
 
 const App = () => {
   const blogs = useSelector((store) => store.blog);
-  const [user, setUser] = useState(null);
+  const user = useSelector((store) => store.user);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const newBlogFormRef = useRef();
@@ -33,16 +34,12 @@ const App = () => {
     const loggedUser = window.localStorage.getItem("localUser");
     if (loggedUser) {
       const user = JSON.parse(loggedUser);
-      setUser(user);
+      dispatch(setUser(user));
     }
   }, []);
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
-  };
-
-  const sortBlogsByLikes = (blogsToSort) => {
-    return blogsToSort.toSorted((a, b) => b.likes - a.likes);
   };
 
   const handlePasswordChange = (event) => {
@@ -113,9 +110,7 @@ const App = () => {
     event.preventDefault();
 
     try {
-      const user = await loginService.login({ username, password });
-      blogService.setToken(user.token);
-      setUser(user);
+      dispatch(loginUser(username, password));
       window.localStorage.setItem("localUser", JSON.stringify(user));
       setUsername("");
       setPassword("");
@@ -129,7 +124,7 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem("localUser");
-    setUser(null);
+    dispatch(setUser(null));
     dispatch(setNotification("Logged out"));
     setTimeout(() => {
       dispatch(removeNotification());
