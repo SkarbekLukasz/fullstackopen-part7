@@ -1,4 +1,11 @@
+import useField from "../hooks/useField";
+import { addNewComment } from "../redux/reducers/blogsReducer";
+import { useDispatch } from "react-redux";
+
 const Blog = ({ blog, deleteBlog, updateLikes }) => {
+  const comment = useField("text");
+  const dispatch = useDispatch();
+
   const addLikes = () => {
     const updatedBlog = { ...blog, likes: blog.likes + 1 };
     updateLikes(updatedBlog);
@@ -14,6 +21,11 @@ const Blog = ({ blog, deleteBlog, updateLikes }) => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author} ?`)) {
       deleteBlog(blog);
     }
+  };
+
+  const newComment = (event) => {
+    event.preventDefault();
+    dispatch(addNewComment(blog, comment.value));
   };
 
   return (
@@ -32,6 +44,12 @@ const Blog = ({ blog, deleteBlog, updateLikes }) => {
       {blog.comments ? (
         <div>
           <h3>Comments</h3>
+          <form>
+            <input {...comment} />
+            <button type="submit" onClick={newComment}>
+              add comment
+            </button>
+          </form>
           <ul>
             {blog.comments.map((comment, index) => (
               <li key={index}>{comment}</li>
