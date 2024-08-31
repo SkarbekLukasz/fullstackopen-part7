@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Blogs from "./components/Blogs";
-import blogService from "./services/blogs";
 import Login from "./components/Login";
-import loginService from "./services/login";
 import Notification from "./components/Notification";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -16,6 +14,9 @@ import {
   saveBlog,
 } from "./redux/reducers/blogsReducer";
 import { loginUser, setUser } from "./redux/reducers/userReducer";
+import Menu from "./components/Menu";
+import Users from "./components/Users";
+import { Route, Routes } from "react-router-dom";
 
 const App = () => {
   const blogs = useSelector((store) => store.blog);
@@ -142,15 +143,26 @@ const App = () => {
           handleUsernameChange={handleUsernameChange}
         />
       ) : (
-        <Blogs
-          createBlog={createBlog}
-          blogs={blogs}
-          user={user}
-          handleLogout={handleLogout}
-          newBlogFormRef={newBlogFormRef}
-          updateLikesCount={updateLikesCount}
-          deleteBlog={deleteBlog}
-        />
+        <div>
+          <Menu />
+          <Routes>
+            <Route
+              path={"/"}
+              element={
+                <Blogs
+                  createBlog={createBlog}
+                  blogs={blogs}
+                  user={user}
+                  handleLogout={handleLogout}
+                  newBlogFormRef={newBlogFormRef}
+                  updateLikesCount={updateLikesCount}
+                  deleteBlog={deleteBlog}
+                />
+              }
+            />
+            <Route path="/users" element={<Users />} />
+          </Routes>
+        </div>
       )}
     </div>
   );
