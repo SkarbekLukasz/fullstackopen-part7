@@ -29,6 +29,16 @@ const Blog = ({ blog, deleteBlog, updateLikes }) => {
         <p>Added by {blog.user.name}</p>
       </div>
       {isUserCreator && <button onClick={deleteThis}>remove</button>}
+      {blog.comments ? (
+        <div>
+          <h3>Comments</h3>
+          <ul>
+            {blog.comments.map((comment, index) => (
+              <li key={index}>{comment}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
     </div>
   );
 };
