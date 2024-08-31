@@ -1,14 +1,20 @@
+import { Container, List, ListItem, Typography } from "@mui/material";
+
 const User = ({ userInfo }) => {
   if (!userInfo) return null;
   return (
     <div>
-      <h2>{userInfo.name}</h2>
-      <h4>added blogs</h4>
-      <ul>
+      <Typography sx={{ mt: 2 }} variant="h4">
+        {userInfo.name}
+      </Typography>
+      <Typography variant="h6">added blogs</Typography>
+      <List sx={{ listStyleType: "disc" }}>
         {userInfo.blogs.map((blog) => (
-          <li key={blog.id}>{blog.title}</li>
+          <ListItem sx={{ display: "list-item" }} key={blog.id}>
+            {blog.title}
+          </ListItem>
         ))}
-      </ul>
+      </List>
     </div>
   );
 };

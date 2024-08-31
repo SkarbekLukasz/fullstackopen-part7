@@ -19,6 +19,8 @@ import Users from "./components/Users";
 import { Route, Routes, useMatch, useNavigate } from "react-router-dom";
 import User from "./components/User";
 import Blog from "./components/Blog";
+import { getAllUsers } from "./redux/reducers/usersReducer";
+import { Box, Button, Container } from "@mui/material";
 
 const App = () => {
   const blogs = useSelector((store) => store.blog);
@@ -43,6 +45,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(getBlogs());
+    dispatch(getAllUsers());
   }, []);
 
   useEffect(() => {
@@ -149,55 +152,60 @@ const App = () => {
   };
 
   return (
-    <div>
-      {user === null ? (
-        <div>
-          <h1>Blogs list</h1>
-          <Notification />
-          <Login
-            handleLogin={handleLogin}
-            handlePasswordChange={handlePasswordChange}
-            handleUsernameChange={handleUsernameChange}
-          />
-        </div>
-      ) : (
-        <div>
-          <div style={{ backgroundColor: "lightgray" }}>
-            <Menu />
-            {user.name} logged in <button onClick={handleLogout}>logout</button>
+    <Container>
+      <div>
+        {user === null ? (
+          <div>
+            <h1>Blogs list</h1>
+            <Notification />
+            <Login
+              handleLogin={handleLogin}
+              handlePasswordChange={handlePasswordChange}
+              handleUsernameChange={handleUsernameChange}
+            />
           </div>
-          <Notification />
-          <Routes>
-            <Route
-              path={"/"}
-              element={
-                <Blogs
-                  createBlog={createBlog}
-                  blogs={blogs}
-                  user={user}
-                  handleLogout={handleLogout}
-                  newBlogFormRef={newBlogFormRef}
-                  updateLikesCount={updateLikesCount}
-                  deleteBlog={deleteBlog}
-                />
-              }
-            />
-            <Route path="/users" element={<Users />} />
-            <Route path="/users/:id" element={<User userInfo={userInfo} />} />
-            <Route
-              path="/blogs/:id"
-              element={
-                <Blog
-                  blog={blogInfo}
-                  deleteBlog={deleteBlog}
-                  updateLikes={updateLikesCount}
-                />
-              }
-            />
-          </Routes>
-        </div>
-      )}
-    </div>
+        ) : (
+          <div>
+            <Box sx={{ backgroundColor: "peru" }}>
+              <Menu />
+              {user.name} logged in{" "}
+              <Button color="danger" variant="outlined" onClick={handleLogout}>
+                logout
+              </Button>
+            </Box>
+            <Notification />
+            <Routes>
+              <Route
+                path={"/"}
+                element={
+                  <Blogs
+                    createBlog={createBlog}
+                    blogs={blogs}
+                    user={user}
+                    handleLogout={handleLogout}
+                    newBlogFormRef={newBlogFormRef}
+                    updateLikesCount={updateLikesCount}
+                    deleteBlog={deleteBlog}
+                  />
+                }
+              />
+              <Route path="/users" element={<Users />} />
+              <Route path="/users/:id" element={<User userInfo={userInfo} />} />
+              <Route
+                path="/blogs/:id"
+                element={
+                  <Blog
+                    blog={blogInfo}
+                    deleteBlog={deleteBlog}
+                    updateLikes={updateLikesCount}
+                  />
+                }
+              />
+            </Routes>
+          </div>
+        )}
+      </div>
+    </Container>
   );
 };
 

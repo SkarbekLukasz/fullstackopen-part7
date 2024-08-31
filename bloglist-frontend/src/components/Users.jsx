@@ -1,38 +1,46 @@
-import { useDispatch } from "react-redux";
 import { useBlogs } from "../hooks/useBlogs";
 import { Link } from "react-router-dom";
-import { getAllUsers } from "../redux/reducers/usersReducer";
-import { useEffect } from "react";
+import {
+  Table,
+  TableHead,
+  TableContainer,
+  Typography,
+  TableRow,
+  TableCell,
+  TableBody,
+  Paper,
+  Container,
+} from "@mui/material";
 
 const Users = () => {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(getAllUsers());
-  }, []);
   const users = useBlogs();
   if (!users) return null;
 
   return (
     <div>
-      <h2>Users</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Blogs</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user.id}>
-              <td>
-                <Link to={`/users/${user.id}`}>{user.user}</Link>
-              </td>
-              <td>{user.blogs}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Typography component={Paper} variant="h4">
+        Users
+      </Typography>
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>User</TableCell>
+              <TableCell>Blogs</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {users.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell>
+                  <Link to={`/users/${user.id}`}>{user.user}</Link>
+                </TableCell>
+                <TableCell>{user.blogs}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 };

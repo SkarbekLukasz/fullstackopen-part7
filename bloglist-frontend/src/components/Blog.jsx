@@ -1,7 +1,16 @@
 import useField from "../hooks/useField";
 import { addNewComment } from "../redux/reducers/blogsReducer";
 import { useDispatch } from "react-redux";
-
+import {
+  Typography,
+  Link,
+  Button,
+  Chip,
+  TextField,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
 const Blog = ({ blog, deleteBlog, updateLikes }) => {
   const comment = useField("text");
   const dispatch = useDispatch();
@@ -30,31 +39,54 @@ const Blog = ({ blog, deleteBlog, updateLikes }) => {
 
   return (
     <div className="blog">
-      <h2>
+      <Typography sx={{ mt: 2 }} variant="h4" gutterBottom>
         {blog.title} {blog.author}
-      </h2>
+      </Typography>
       <div className="blogDetails">
-        <a href={blog.url}>{blog.url}</a>
-        <p>
-          likes {blog.likes} <button onClick={addLikes}>like</button>
-        </p>
-        <p>Added by {blog.user.name}</p>
+        <Link href={blog.url}>{blog.url}</Link>
+        <Typography sx={{ mt: 2 }} variant="body1" gutterBottom>
+          likes {blog.likes}
+          <Chip
+            color="primary"
+            variant="outlined"
+            label="like"
+            onClick={addLikes}
+            sx={{ ml: 2 }}
+          />
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Added by {blog.user.name}
+        </Typography>
       </div>
-      {isUserCreator && <button onClick={deleteThis}>remove</button>}
+      {isUserCreator && (
+        <Button color="secondary" variant="contained" onClick={deleteThis}>
+          remove
+        </Button>
+      )}
       {blog.comments ? (
         <div>
-          <h3>Comments</h3>
+          <Typography sx={{ mt: 4 }} variant="h5">
+            Comments
+          </Typography>
           <form>
-            <input {...comment} />
-            <button type="submit" onClick={newComment}>
+            <TextField {...comment} />
+            <Button
+              sx={{ ml: 2 }}
+              color="primary"
+              variant="contained"
+              type="submit"
+              onClick={newComment}
+            >
               add comment
-            </button>
+            </Button>
           </form>
-          <ul>
+          <List sx={{ listStyleType: "disc" }}>
             {blog.comments.map((comment, index) => (
-              <li key={index}>{comment}</li>
+              <ListItem sx={{ display: "list-item", border: 1 }} key={index}>
+                <ListItemText>{comment}</ListItemText>
+              </ListItem>
             ))}
-          </ul>
+          </List>
         </div>
       ) : null}
     </div>

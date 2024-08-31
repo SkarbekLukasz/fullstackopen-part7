@@ -1,6 +1,8 @@
+import { ToggleButton, Typography } from "@mui/material";
 import NewBlog from "./NewBlog";
 import Togglable from "./Togglable";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
+import { Link } from "@mui/material";
 
 const Blogs = ({ blogs, createBlog, newBlogFormRef }) => {
   const styles = {
@@ -14,14 +16,22 @@ const Blogs = ({ blogs, createBlog, newBlogFormRef }) => {
   };
   return (
     <div>
-      <h2>Blogs</h2>
+      <Typography sx={{ mt: 2 }} variant="h4">
+        Blogs
+      </Typography>
       <Togglable buttonLabel="new blog" ref={newBlogFormRef}>
         <NewBlog createBlog={createBlog} />
       </Togglable>
       <br />
-      <h3>List of blogs</h3>
+      <Typography variant="h5">List of blogs</Typography>
       {blogs.map((blog) => (
-        <Link style={styles} to={`/blogs/${blog.id}`}>
+        <Link
+          variant="body2"
+          sx={{ display: "block" }}
+          component={RouterLink}
+          key={blog.id}
+          to={`/blogs/${blog.id}`}
+        >
           {blog.title} {blog.author}
         </Link>
       ))}
