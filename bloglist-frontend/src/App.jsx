@@ -16,8 +16,9 @@ import {
 import { loginUser, setUser } from "./redux/reducers/userReducer";
 import Menu from "./components/Menu";
 import Users from "./components/Users";
-import { Route, Routes, useMatch } from "react-router-dom";
+import { Route, Routes, useMatch, useNavigate } from "react-router-dom";
 import User from "./components/User";
+import Blog from "./components/Blog";
 
 const App = () => {
   const blogs = useSelector((store) => store.blog);
@@ -28,10 +29,16 @@ const App = () => {
   const newBlogFormRef = useRef();
 
   const dispatch = useDispatch();
-  const match = useMatch("/users/:id");
+  const navigate = useNavigate();
 
+  const match = useMatch("/users/:id");
+  const matchBlogId = useMatch("/blogs/:id");
   const userInfo = match
     ? users.find((user) => user.id === match.params.id)
+    : null;
+
+  const blogInfo = matchBlogId
+    ? blogs.find((blog) => blog.id === matchBlogId.params.id)
     : null;
 
   useEffect(() => {
@@ -59,6 +66,7 @@ const App = () => {
     try {
       const blog = { title, author, url };
       dispatch(saveBlog(blog));
+      navigate("/");
       dispatch(
         setNotification(
           `Successfully added blog ${blog.title} by ${blog.author}`
@@ -98,6 +106,7 @@ const App = () => {
   const deleteBlog = async (blogToDelete) => {
     try {
       dispatch(deleteBlogs(blogToDelete));
+      navigate("/");
       dispatch(
         setNotification(
           `Successfully deleted blog ${blogToDelete.title} by ${blogToDelete.author}`
@@ -141,17 +150,23 @@ const App = () => {
 
   return (
     <div>
-      <h1>Blogs list</h1>
-      <Notification />
       {user === null ? (
-        <Login
-          handleLogin={handleLogin}
-          handlePasswordChange={handlePasswordChange}
-          handleUsernameChange={handleUsernameChange}
-        />
+        <div>
+          <h1>Blogs list</h1>
+          <Notification />
+          <Login
+            handleLogin={handleLogin}
+            handlePasswordChange={handlePasswordChange}
+            handleUsernameChange={handleUsernameChange}
+          />
+        </div>
       ) : (
         <div>
-          <Menu />
+          <div style={{ backgroundColor: "lightgray" }}>
+            <Menu />
+            {user.name} logged in <button onClick={handleLogout}>logout</button>
+          </div>
+          <Notification />
           <Routes>
             <Route
               path={"/"}
@@ -169,6 +184,16 @@ const App = () => {
             />
             <Route path="/users" element={<Users />} />
             <Route path="/users/:id" element={<User userInfo={userInfo} />} />
+            <Route
+              path="/blogs/:id"
+              element={
+                <Blog
+                  blog={blogInfo}
+                  deleteBlog={deleteBlog}
+                  updateLikes={updateLikesCount}
+                />
+              }
+            />
           </Routes>
         </div>
       )}

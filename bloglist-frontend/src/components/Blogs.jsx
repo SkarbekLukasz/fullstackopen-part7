@@ -1,22 +1,32 @@
-import Blog from './Blog'
-import NewBlog from './NewBlog'
-import Togglable from './Togglable'
+import NewBlog from "./NewBlog";
+import Togglable from "./Togglable";
+import { Link } from "react-router-dom";
 
-const Blogs = ({ blogs, user, handleLogout, createBlog, newBlogFormRef, updateLikesCount, deleteBlog }) => {
+const Blogs = ({ blogs, createBlog, newBlogFormRef }) => {
+  const styles = {
+    paddingTop: 10,
+    paddingLeft: 2,
+    border: "solid",
+    borderWidth: 1,
+    marginBottom: 5,
+    display: "block",
+    borderColor: "black",
+  };
   return (
     <div>
       <h2>Blogs</h2>
-      <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
-      <Togglable buttonLabel='new blog' ref={newBlogFormRef}>
+      <Togglable buttonLabel="new blog" ref={newBlogFormRef}>
         <NewBlog createBlog={createBlog} />
       </Togglable>
       <br />
       <h3>List of blogs</h3>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} updateLikes={updateLikesCount} deleteBlog={deleteBlog} />
-      )}
+      {blogs.map((blog) => (
+        <Link style={styles} to={`/blogs/${blog.id}`}>
+          {blog.title} {blog.author}
+        </Link>
+      ))}
     </div>
-  )
-}
+  );
+};
 
-export default Blogs
+export default Blogs;
