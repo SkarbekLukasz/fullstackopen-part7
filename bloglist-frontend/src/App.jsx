@@ -16,16 +16,23 @@ import {
 import { loginUser, setUser } from "./redux/reducers/userReducer";
 import Menu from "./components/Menu";
 import Users from "./components/Users";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useMatch } from "react-router-dom";
+import User from "./components/User";
 
 const App = () => {
   const blogs = useSelector((store) => store.blog);
   const user = useSelector((store) => store.user);
+  const users = useSelector((store) => store.users);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const newBlogFormRef = useRef();
 
   const dispatch = useDispatch();
+  const match = useMatch("/users/:id");
+
+  const userInfo = match
+    ? users.find((user) => user.id === match.params.id)
+    : null;
 
   useEffect(() => {
     dispatch(getBlogs());
@@ -161,6 +168,7 @@ const App = () => {
               }
             />
             <Route path="/users" element={<Users />} />
+            <Route path="/users/:id" element={<User userInfo={userInfo} />} />
           </Routes>
         </div>
       )}

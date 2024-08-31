@@ -2,27 +2,25 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 export const useBlogs = () => {
-  const [users, setUsers] = useState([]);
-  const blogs = useSelector((state) => state.blog);
+  const users = useSelector((state) => state.users);
+  const [userData, setUserData] = useState([]);
 
   useEffect(() => {
-    const blogsArray = {};
-
-    blogs.forEach((blog) => {
-      if (blogsArray[blog.user.name]) {
-        blogsArray[blog.user.name]++;
-      } else {
-        blogsArray[blog.user.name] = 1;
+    const fetchAndSetUsers = async () => {
+      try {
+        const userObjects = users.map((user) => ({
+          user: user.name,
+          blogs: user.blogs.length,
+          id: user.id,
+        }));
+        setUserData(userObjects);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
       }
-    });
+    };
 
-    const blogsToSet = Object.keys(blogsArray).map((user) => ({
-      user: user,
-      blogs: blogsArray[user],
-    }));
+    fetchAndSetUsers();
+  }, [users]);
 
-    setUsers(blogsToSet);
-  }, [blogs]);
-
-  return users;
+  return userData;
 };
